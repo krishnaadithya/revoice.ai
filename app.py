@@ -7,8 +7,10 @@ from IPython.display import display, Audio
 import soundfile as sf
 from pydub import AudioSegment
 import gradio as gr
+from dotenv import load_dotenv
 
-
+# Load environment variables
+load_dotenv()
 api_key = os.getenv("GROQ_API_KEY")
 client = Groq(api_key=api_key)
 
@@ -85,12 +87,7 @@ def text_to_audio(text, lang_code = 'a', voice = 'af_heart', save_path="output.w
       text, voice=voice, # <= change voice here
       speed=1, split_pattern=r'\n+'
   )
-  for i, (gs, ps, audio) in enumerate(generator):
-      #print(i)  # i => index
-      #print(gs) # gs => graphemes/text
-      #print(ps) # ps => phonemes
-      #display(Audio(data=audio, rate=24000, autoplay=i==0))
-      
+  for i, (gs, ps, audio) in enumerate(generator):      
       # Save individual segment
       segment_path = f'{i}.wav'
       sf.write(segment_path, audio, 24000)
@@ -112,29 +109,73 @@ def transcribe_audio(audio_path):
      
   return transcription.text
 
-#stictc
-video_url = "https://www.youtube.com/watch?v=ZcI2B92JlJU"
-youtube_caption_text = get_youtub_caption(video_url)
-vid_name = video_url.split("=")[-1]
-text_to_audio(youtube_caption_text, save_path=vid_name+'.wav')
+def process_youtube(video_url):
+    """Process YouTube video and return generated audio"""
+    try:
+        youtube_caption_text = get_youtub_caption(video_url)
+        vid_name = video_url.split("=")[-1]
+        output_path = f"outputs/{vid_name}.wav"
+        os.makedirs("outputs", exist_ok=True)
+        
+        text_to_audio(youtube_caption_text, save_path=output_path)
+        # Read the audio file and return in Gradio-compatible format
+        audio_data, sample_rate = sf.read(output_path)
+        return (sample_rate, audio_data), "Success! Audio generated from YouTube captions."
+    except Exception as e:
+        return None, f"Error processing YouTube video: {str(e)}"
 
+def process_audio_file(audio_file):
+    """Process uploaded audio file and return generated audio"""
+    try:
+        if audio_file is None:
+            return None, "Please upload an audio file"
+            
+        transcription = transcribe_audio(audio_file)
+        output_path = f"outputs/{os.path.basename(audio_file)}_output.wav"
+        os.makedirs("outputs", exist_ok=True)
+        
+        text_to_audio(transcription, voice="af_river", save_path=output_path)
+        # Read the audio file and return in Gradio-compatible format
+        audio_data, sample_rate = sf.read(output_path)
+        return (sample_rate, audio_data), "Success! Audio generated from uploaded file."
+    except Exception as e:
+        return None, f"Error processing audio file: {str(e)}"
 
-
-audio_path = "/content/test.mp3"
-vid_name = os.path.basename(audio_path).split(".")[0]
-text_to_audio(youtube_caption_text, voice = "af_river", save_path=vid_name+'.wav')
-
-def greet(name):
-    return f"Hello, {name}!"
+def process_input(youtube_url, audio_file):
+    """Main processing function that handles both input types"""
+    if youtube_url:
+        return process_youtube(youtube_url)
+    elif audio_file:
+        return process_audio_file(audio_file)
+    else:
+        return None, "Please provide either a YouTube URL or upload an audio file"
 
 # Create the Gradio interface
-demo = gr.Interface(
-    fn=greet,
-    inputs=gr.Textbox(label="Enter your name"),
-    outputs=gr.Textbox(label="Output"),
-    title="Simple Greeting App",
-    description="Enter your name and get a personalized greeting!"
-)
+with gr.Blocks(title="Audio Processing App") as demo:
+    gr.Markdown("# Audio Processing App")
+    gr.Markdown("Enter a YouTube URL or upload an audio file to process")
+    
+    with gr.Row():
+        with gr.Column():
+            youtube_input = gr.Textbox(
+                label="YouTube URL",
+                placeholder="Enter YouTube URL here..."
+            )
+            audio_input = gr.Audio(
+                label="Or upload audio file",
+                type="filepath"
+            )
+            process_btn = gr.Button("Process")
+        
+        with gr.Column():
+            audio_output = gr.Audio(label="Generated Audio")
+            status_output = gr.Textbox(label="Status")
+    
+    process_btn.click(
+        fn=process_input,
+        inputs=[youtube_input, audio_input],
+        outputs=[audio_output, status_output]
+    )
 
 if __name__ == "__main__":
     demo.launch()
