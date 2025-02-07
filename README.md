@@ -55,7 +55,7 @@ pip install -r requirements.txt
 
 1. Start the application:
 ```bash
-python src/app.py
+python -m src.app
 ```
 
 2. Open your web browser and navigate to the provided URL (usually http://127.0.0.1:7860)
