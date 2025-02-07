@@ -1,60 +1,47 @@
-# Revoice.AI
+# Audio Processing App
 
-Revoice.AI is a tool that converts audio/video content to different voices, making content more engaging by transforming boring or monotonous voices into voices you prefer.
+A simple web application that converts YouTube videos and audio files into synthesized speech using AI models.
 
 ## Features
 
-- Convert audio from various sources (YouTube, direct uploads)
-- Support for multiple file formats (.mp3, .wav, .mp4)
-- Voice conversion using Kokoro TTS
-- Speaker-aware transcription using Whisper
-- Simple, user-friendly interface
+- Process YouTube videos by extracting and converting captions to speech
+- Convert uploaded audio files through transcription and voice synthesis
+- User-friendly web interface built with Gradio
+- Multiple voice options for synthesis
+- Automatic caption extraction from YouTube videos
 
 ## Project Structure
 
 ```
-revoice_ai/
-│── backend/
-│   │── audio_processing/
-│   │   ├── transcriber.py  # Uses Whisper to transcribe and diarize
-│   │   ├── converter.py    # Uses Kokoro TTS for voice conversion
-│   │   ├── downloader.py   # Handles video/audio downloads
-│   │   ├── utils.py        # Helper functions
-│   │── main.py             # FastAPI backend
-│
-│── frontend/
-│   │── app.py              # Gradio UI
-│   │── components.py       # UI components
-│
-│── models/                 # Pretrained models
-│── config.py              # Configuration settings
-│── requirements.txt       # Dependencies
+project/
+├── src/
+│   ├── utils/
+│   │   ├── audio.py      # Audio processing functions
+│   │   └── youtube.py    # YouTube caption extraction
+│   ├── app.py           # Gradio interface
+│   └── config.py        # Configuration settings
+├── requirements.txt     # Dependencies
+├── .env.example        # Example environment variables
+└── README.md           # Documentation
 ```
 
-## Setup
+## Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/revoice.ai.git
-cd revoice.ai
+git clone <repository-url>
+cd <repository-name>
 ```
 
-2. Install system dependencies:
-
-For macOS:
+2. Install system dependencies (Linux):
 ```bash
-brew install espeak-ng
+apt-get install espeak-ng
 ```
 
-For Ubuntu/Debian:
-```bash
-sudo apt-get install espeak-ng
-```
-
-3. Create and set up environment variables:
+3. Set up environment variables:
 ```bash
 cp .env.example .env
-# Edit .env and add your Groq API key
+# Edit .env and add your GROQ_API_KEY
 ```
 
 4. Install Python dependencies:
@@ -62,26 +49,36 @@ cp .env.example .env
 pip install -r requirements.txt
 ```
 
-5. Run the application:
-```bash
-python frontend/app.py
-```
-
 ## Usage
 
-1. Upload an audio/video file or provide a YouTube URL
-2. Choose your desired voice
-3. Wait for processing
-4. Download the converted audio
+1. Start the application:
+```bash
+python src/app.py
+```
+
+2. Open your web browser and navigate to the provided URL (usually http://127.0.0.1:7860)
+
+3. Use the app by either:
+   - Entering a YouTube URL
+   - Uploading an audio file
+
+4. Click "Process" and wait for the generated audio
 
 ## Technologies Used
 
-- Whisper: For accurate speech-to-text transcription
-- Kokoro TTS: For high-quality voice synthesis
-- FastAPI: Backend API framework
-- Gradio: User interface
-- PyTubeFix: YouTube video processing
-- espeak-ng: Required for English OOD fallback and some non-English languages
+- [Gradio](https://gradio.app/): Web interface framework
+- [Kokoro](https://github.com/kairess/kokoro): Text-to-speech synthesis
+- [Groq](https://groq.com/): Audio transcription using Whisper model
+- [PyTubeFix](https://github.com/JuanBindez/pytubefix): YouTube video processing
+- [soundfile](https://github.com/bastibe/python-soundfile): Audio file handling
+- [pydub](https://github.com/jiaaro/pydub): Audio processing
+
+## Requirements
+
+- Python 3.8+
+- Groq API key
+- espeak-ng (for Linux systems)
+- Internet connection for YouTube processing
 
 ## Contributing
 
@@ -90,4 +87,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-```
