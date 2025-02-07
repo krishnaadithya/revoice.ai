@@ -1,9 +1,9 @@
 import os
 import gradio as gr
 import soundfile as sf
-from utils.youtube import get_youtube_caption
-from utils.audio import text_to_audio, transcribe_audio
-from config import OUTPUT_DIR
+from src.utils.youtube import get_youtube_caption
+from src.utils.audio import text_to_audio, transcribe_audio
+from src.config import OUTPUT_DIR
 
 def process_youtube(video_url):
     """Process YouTube video and return generated audio"""

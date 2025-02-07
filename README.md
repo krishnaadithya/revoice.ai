@@ -15,7 +15,9 @@ A simple web application that converts YouTube videos and audio files into synth
 ```
 project/
 ├── src/
+│   ├── __init__.py    # Makes src a package
 │   ├── utils/
+│   │   ├── __init__.py  # Makes utils a package
 │   │   ├── audio.py      # Audio processing functions
 │   │   └── youtube.py    # YouTube caption extraction
 │   ├── app.py           # Gradio interface

@@ -3,7 +3,7 @@ import soundfile as sf
 from pydub import AudioSegment
 from kokoro import KPipeline
 from groq import Groq
-from ..config import GROQ_API_KEY, SAMPLE_RATE, OUTPUT_DIR
+from src.config import GROQ_API_KEY, SAMPLE_RATE, OUTPUT_DIR
 
 client = Groq(api_key=GROQ_API_KEY)
 
