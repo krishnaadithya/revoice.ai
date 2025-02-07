@@ -1,6 +1,9 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
+    # API Keys
+    GROQ_API_KEY: str
+
     # API Settings
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8000
@@ -19,5 +22,7 @@ class Settings(BaseSettings):
     
     class Config:
         env_file = ".env"
+        env_file_encoding = 'utf-8'
+        extra = "ignore"  # Allow extra fields in environment
 
 settings = Settings() 

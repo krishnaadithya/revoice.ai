@@ -45,3 +45,5 @@ models/
 # OS specific
 .DS_Store
 Thumbs.db 
+
+revoice.egg-info

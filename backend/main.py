@@ -4,10 +4,10 @@ import os
 from typing import Optional
 from pydantic import BaseModel
 
-from audio_processing.downloader import VideoDownloader
-from audio_processing.transcriber import Transcriber
-from audio_processing.converter import VoiceConverter
-from audio_processing.utils import (
+from backend.audio_processing.downloader import VideoDownloader
+from backend.audio_processing.transcriber import Transcriber
+from backend.audio_processing.converter import VoiceConverter
+from backend.audio_processing.utils import (
     create_directories,
     generate_filename,
     is_valid_format
@@ -29,9 +29,9 @@ class ConversionRequest(BaseModel):
 
 @app.post("/convert")
 async def convert_audio(
+    background_tasks: BackgroundTasks,
     request: ConversionRequest = None,
-    file: UploadFile = File(None),
-    background_tasks: BackgroundTasks
+    file: UploadFile = File(None)
 ):
     try:
         # Handle YouTube URL
@@ -89,3 +89,6 @@ async def convert_audio(
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host=settings.API_HOST, port=settings.API_PORT) 
+
+    #for render 
+    #uvicorn.run(app, host="0.0.0.0", port=8000)

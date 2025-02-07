@@ -2,9 +2,22 @@ import gradio as gr
 import requests
 import os
 import tempfile
+import sys
+from pathlib import Path
+
+# Add project root to Python path
+project_root = Path(__file__).parent.parent
+sys.path.append(str(project_root))
+
 from config import settings
+from backend.audio_processing import Transcriber, VoiceConverter, VideoDownloader
 
 API_URL = f"http://localhost:{settings.API_PORT}/convert"
+
+# Initialize backend services
+transcriber = Transcriber()
+converter = VoiceConverter()
+downloader = VideoDownloader()
 
 # Available Kokoro voices and accents
 KOKORO_VOICES = {
@@ -105,4 +118,13 @@ with gr.Blocks(title="Revoice.AI") as interface:
     )
 
 if __name__ == "__main__":
-    interface.launch() 
+    # Start FastAPI server in a separate process
+    import subprocess
+    import sys
+    from pathlib import Path
+    
+    backend_path = Path(__file__).parent.parent / "backend" / "main.py"
+    subprocess.Popen([sys.executable, str(backend_path)])
+    
+    # Start Gradio interface
+    interface.launch()

@@ -3,7 +3,8 @@ uvicorn
 gradio
 groq
 pytubefix
-pydantic
+pydantic==2.4.2
+pydantic-settings==2.0.3
 python-multipart
 numpy
 soundfile
@@ -11,4 +12,5 @@ librosa
 kokoro>=0.7.4
 celery
 redis
-python-dotenv 
+python-dotenv
+spacy>=3.0.0 
